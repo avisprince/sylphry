@@ -8,25 +8,17 @@ import {
   Primitive,
 } from "./types";
 import { injectRules, rebuildStylesheet } from "./stylesheet";
-import { DEFAULT_BREAKPOINTS, globalConfig, styleRegistry } from "./globals";
+import { globalConfig, styleRegistry } from "./globals";
 
 /** Initialize global settings, then rebuild all styles */
 export function initialize(options: Partial<GlobalConfig>): void {
-  if (options.breakpoints) {
-    globalConfig.breakpoints = {
-      ...DEFAULT_BREAKPOINTS,
-      ...options.breakpoints,
-    };
-  }
-  if (options.defaultUnit) {
-    globalConfig.defaultUnit = options.defaultUnit;
-  }
-  if (options.tokens) {
-    globalConfig.tokens = options.tokens;
-  }
-  if (options.activeTheme) {
-    globalConfig.activeTheme = options.activeTheme;
-  }
+  globalConfig.tokens = options.tokens ?? globalConfig.tokens;
+  globalConfig.defaultUnit = options.defaultUnit ?? globalConfig.defaultUnit;
+  globalConfig.activeTheme = options.activeTheme ?? globalConfig.activeTheme;
+  globalConfig.breakpoints = {
+    ...globalConfig.breakpoints,
+    ...(options.breakpoints ?? {}),
+  };
 
   rebuildStylesheet();
 }
@@ -37,10 +29,12 @@ export function setTheme(theme: string): void {
   rebuildStylesheet();
 }
 
-/**
- * Options for createStyles, with token autocomplete
- */
-export interface CreateStylesOptions {
+interface CreateStylesOptions {
+  /** Prefix for generated class names */
+  prefix?: string;
+}
+
+interface ProcessStylesOptions {
   /** Prefix for generated class names */
   prefix?: string;
 }
@@ -56,12 +50,17 @@ export function createStyles<T extends Record<string, NestedStyles>>(
   (flagsArray: Array<keyof T | [keyof T, boolean]>): string;
 } & Record<keyof T, string> {
   const keys = Object.keys(definitions) as Array<keyof T>;
-  const prefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
+  const globalPrefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
 
   // Parse definitions into raw buckets
   const parsedList = keys.map(k => parseRules(definitions[k]));
 
-  function styles(input: FlagsInput<T>): string {
+  function processStyles(
+    input: FlagsInput<T>,
+    options: ProcessStylesOptions = {}
+  ): string {
+    const prefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
+
     // Determine active keys in insertion order
     const flags = normalizeFlags<T>(input);
     const activeKeys = (Object.keys(flags) as Array<keyof T>).filter(
@@ -87,7 +86,7 @@ export function createStyles<T extends Record<string, NestedStyles>>(
 
     const hash = hashSignature(sigParts.join("|"));
     const name = activeKeys.map(k => toKebab(String(k))).join("_");
-    const className = `${prefix}${name}_${hash}`;
+    const className = `${prefix || globalPrefix}${name}_${hash}`;
 
     // Register & inject once
     if (!styleRegistry.has(className)) {
@@ -99,11 +98,12 @@ export function createStyles<T extends Record<string, NestedStyles>>(
   }
 
   // Single-key getters
-  const combo = styles as unknown as typeof styles & Record<keyof T, string>;
+  const combo = processStyles as unknown as typeof processStyles &
+    Record<keyof T, string>;
 
   keys.forEach(k => {
     Object.defineProperty(combo, k, {
-      get: () => styles([k] as Array<keyof T>),
+      get: () => processStyles([k] as Array<keyof T>),
       enumerable: true,
     });
   });
@@ -161,6 +161,7 @@ function parseRules(rules: NestedStyles): ParsedRules {
       for (const p in raw as Record<string, Primitive>) {
         const pseudo = p.startsWith(":") ? p.slice(1) : undefined;
         const prop = pseudo ? p.slice(1) : p;
+
         variants[key].push({
           prop,
           raw: (raw as Record<string, Primitive>)[p],

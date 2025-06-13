@@ -6,7 +6,7 @@ import {
 } from "./types";
 
 /** Default Tailwind-like breakpoints */
-export const DEFAULT_BREAKPOINTS: BreakpointsMap = {
+const DEFAULT_BREAKPOINTS: BreakpointsMap = {
   sm: "640px",
   md: "768px",
   lg: "1024px",
