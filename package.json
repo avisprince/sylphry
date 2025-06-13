@@ -1,0 +1,29 @@
+{
+  "name": "sylphry",
+  "version": "0.1.0",
+  "description": "Lightweight, atomic, zero-config, framework-agnostic CSS-in-JS with tokens, theming & responsive breakpoints.",
+  "homepage": "https://github.com/avisprince/sylphry#readme",
+  "bugs": {
+    "url": "https://github.com/avisprince/sylphry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avisprince/sylphry.git"
+  },
+  "license": "MIT",
+  "author": "Avi Prince",
+  "type": "commonjs",
+  "main": "index.js",
+  "keywords": [
+    "css-in-js",
+    "atomic-css",
+    "theming",
+    "tokens",
+    "responsive",
+    "utility",
+    "styling",
+    "framework-agnostic",
+    "typescript",
+    "react"
+  ]
+}
