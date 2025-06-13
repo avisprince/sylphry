@@ -33,6 +33,7 @@
     "build": "tsc --build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint \"src/**/*.ts\"",
     "prepublishOnly": "npm run build && npm test"
   },
@@ -41,10 +42,11 @@
     "@types/react": "^19.1.8",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@vitest/coverage-istanbul": "^3.2.3",
     "eslint": "^8.0.0",
     "jsdom": "^26.1.0",
     "react": "^19.1.0",
     "typescript": "^5.0.0",
-    "vitest": "^0.28.0"
+    "vitest": "^3.2.3"
   }
 }

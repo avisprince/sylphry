@@ -38,9 +38,8 @@ export function rebuildStylesheet(): void {
 }
 
 /** Format raw value: number→unit or resolve token */
-function format(k: string, v: Primitive): string {
+export function format(k: string, v: Primitive): string {
   if (typeof v === "number") {
-    console.log(k);
     return k in isUnitlessNumber
       ? String(v)
       : `${v}${globalConfig.defaultUnit}`;
@@ -56,6 +55,7 @@ function format(k: string, v: Primitive): string {
       return src[key] ?? def[key] ?? `$${t1}${t2 ? `:${t2}` : ""}$`;
     });
   }
+
   return String(v);
 }
 
