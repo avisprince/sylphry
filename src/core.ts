@@ -54,6 +54,7 @@ export function createStyles<T extends Record<string, NestedStyles>>(
 
   // Parse definitions into raw buckets
   const parsedList = keys.map(k => parseRules(definitions[k]));
+  console.log("parsed list", parsedList);
 
   function processStyles(
     input: FlagsInput<T>,

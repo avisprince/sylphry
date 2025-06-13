@@ -1,9 +1,14 @@
-import { globalConfig, styleRegistry } from "./globals";
-import { BreakpointsMap, ParsedRules, Primitive } from "./types";
+import { globalConfig, isUnitlessNumber, styleRegistry } from "./globals";
+import { ParsedRules, Primitive } from "./types";
 import { toKebab } from "./utils";
 
 // Singleton stylesheet and registry
 let styleSheet: CSSStyleSheet | null = null;
+
+/** Test helper: clear the singleton so tests start fresh */
+export function __resetStylesheet() {
+  styleSheet = null;
+}
 
 export function getStylesheet(): CSSStyleSheet {
   if (!styleSheet) {
@@ -15,7 +20,7 @@ export function getStylesheet(): CSSStyleSheet {
   return styleSheet;
 }
 
-function clearStylesheet(): void {
+export function clearStylesheet(): void {
   const sheet = getStylesheet();
 
   while (sheet.cssRules.length) {
@@ -33,8 +38,14 @@ export function rebuildStylesheet(): void {
 }
 
 /** Format raw value: number→unit or resolve token */
-function format(v: Primitive | string): string {
-  if (typeof v === "number") return `${v}${globalConfig.defaultUnit}`;
+function format(k: string, v: Primitive): string {
+  if (typeof v === "number") {
+    console.log(k);
+    return k in isUnitlessNumber
+      ? String(v)
+      : `${v}${globalConfig.defaultUnit}`;
+  }
+
   if (typeof v === "string") {
     const tokenRE = /\$([A-Za-z0-9_]+)(?::([A-Za-z0-9_]+))?\$/g;
     return v.replace(tokenRE, (_, t1, t2) => {
@@ -54,7 +65,7 @@ export function injectRules(className: string, parsedArr: ParsedRules[]) {
   const sheet = getStylesheet();
   const mapS = new Map<string, string>();
   parsedArr.forEach(pr =>
-    pr.statics.forEach(([p, r]) => mapS.set(toKebab(p), format(r)))
+    pr.statics.forEach(([p, r]) => mapS.set(toKebab(p), format(p, r)))
   );
   if (mapS.size) {
     const decl = Array.from(mapS)
@@ -67,7 +78,7 @@ export function injectRules(className: string, parsedArr: ParsedRules[]) {
   parsedArr.forEach(pr =>
     pr.pseudos.forEach(([ps, p, r]) => {
       const sub = mapP.get(ps) || new Map<string, string>();
-      sub.set(toKebab(p), format(r));
+      sub.set(toKebab(p), format(p, r));
       mapP.set(ps, sub);
     })
   );
@@ -81,7 +92,9 @@ export function injectRules(className: string, parsedArr: ParsedRules[]) {
   Object.entries(globalConfig.breakpoints).forEach(([bp, minW]) => {
     const mapV = new Map<string, string>();
     parsedArr.forEach(pr =>
-      pr.variants[bp]?.forEach(v => mapV.set(toKebab(v.prop), format(v.raw)))
+      pr.variants[bp]?.forEach(v =>
+        mapV.set(toKebab(v.prop), format(className, v.raw))
+      )
     );
     if (mapV.size) {
       const decl = Array.from(mapV)
