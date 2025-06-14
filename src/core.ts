@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { hashSignature, isObject, toKebab } from "./utils";
 import {
   FlagsInput,
@@ -6,6 +5,7 @@ import {
   NestedStyles,
   ParsedRules,
   Primitive,
+  PrimitiveOrCSSProperties,
 } from "./types";
 import { injectRules, rebuildStylesheet } from "./stylesheet";
 import { globalConfig, styleRegistry } from "./globals";
@@ -46,15 +46,20 @@ export function createStyles<T extends Record<string, NestedStyles>>(
   definitions: T,
   options: CreateStylesOptions = {}
 ): {
-  (flags: Partial<Record<keyof T, boolean>>): string;
-  (flagsArray: Array<keyof T | [keyof T, boolean]>): string;
+  (
+    flags: Partial<Record<keyof T, boolean>>,
+    options?: ProcessStylesOptions
+  ): string;
+  (
+    flagsArray: Array<keyof T | [keyof T, boolean]>,
+    options?: ProcessStylesOptions
+  ): string;
 } & Record<keyof T, string> {
   const keys = Object.keys(definitions) as Array<keyof T>;
   const globalPrefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
 
   // Parse definitions into raw buckets
   const parsedList = keys.map(k => parseRules(definitions[k]));
-  console.log("parsed list", parsedList);
 
   function processStyles(
     input: FlagsInput<T>,
@@ -112,7 +117,7 @@ export function createStyles<T extends Record<string, NestedStyles>>(
   return combo;
 }
 
-function normalizeFlags<T>(
+export function normalizeFlags<T>(
   input: FlagsInput<T>
 ): Partial<Record<keyof T, boolean>> {
   if (!Array.isArray(input)) {
@@ -134,12 +139,12 @@ function normalizeFlags<T>(
 }
 
 /** Parse rules into raw buckets without formatting */
-function parseRules(rules: NestedStyles): ParsedRules {
+export function parseRules(rules: NestedStyles): ParsedRules {
   const statics: ParsedRules["statics"] = [];
   const pseudos: ParsedRules["pseudos"] = [];
   const variants: ParsedRules["variants"] = {};
   const inlineRE = /^(\w+):(\w[\w-]*)(?::(\w+))?$/;
-  const rec = rules as Record<string, Primitive | CSSProperties>;
+  const rec = rules as Record<string, PrimitiveOrCSSProperties>;
 
   for (const key in rec) {
     const raw = rec[key];
@@ -150,9 +155,9 @@ function parseRules(rules: NestedStyles): ParsedRules {
 
       if (bp in globalConfig.breakpoints) {
         variants[bp] = variants[bp] || [];
+        variants[bp].push({ prop, raw: raw as Primitive, pseudo });
       }
 
-      variants[bp].push({ prop, raw: raw as Primitive, pseudo });
       continue;
     }
 
@@ -161,7 +166,7 @@ function parseRules(rules: NestedStyles): ParsedRules {
 
       for (const p in raw as Record<string, Primitive>) {
         const pseudo = p.startsWith(":") ? p.slice(1) : undefined;
-        const prop = pseudo ? p.slice(1) : p;
+        const prop = pseudo ?? p;
 
         variants[key].push({
           prop,

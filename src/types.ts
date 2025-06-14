@@ -1,9 +1,17 @@
 import type { CSSProperties } from "react";
+import { Pseudo } from "./pseudo.types";
 
 export type Primitive = string | number;
+export type Breakpoint = Primitive;
+export type PrimitiveOrCSSProperties = Primitive | CSSProperties;
+export type PseudoMap = Record<Pseudo, CSSProperties>;
+export type BreakpointMap = Record<Breakpoint, CSSProperties | PseudoMap>;
+
 export type NestedStyles =
   | CSSProperties
-  | Record<string, Primitive | CSSProperties>;
+  | PseudoMap
+  | BreakpointMap
+  | Record<string, Primitive>;
 
 export interface ParsedRules {
   statics: Array<[string, Primitive]>;
@@ -14,8 +22,7 @@ export interface ParsedRules {
   >;
 }
 
-export type Breakpoint = string;
-export type BreakpointsMap = Record<Primitive, Breakpoint>;
+export type BreakpointsMap = Record<string, string>;
 
 export type Token = string;
 export type TokensMap = Record<string, Token>;
