@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as stylesheet from "../stylesheet";
 import { globalConfig, styleRegistry } from "../globals";
-import type { NestedStyles, FlagsInput, ParsedRules } from "../types";
 import {
   normalizeFlags,
   parseRules,
@@ -9,6 +8,7 @@ import {
   setTheme,
   createStyles,
 } from "../core";
+import { FlagsInput, ParsedRules, Style } from "../types/core.types";
 
 describe("API functions", () => {
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe("API functions", () => {
     it("parses statics, pseudos, and variants correctly", () => {
       globalConfig.breakpoints = { sm: "500px", lg: "1000px" };
 
-      const rules: NestedStyles = {
+      const rules: Style = {
         // CSSProperties
         color: "red",
         height: 10,

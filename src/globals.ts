@@ -3,10 +3,11 @@ import {
   GlobalConfig,
   StyleRegistry,
   TokensDefinition,
-} from "./types";
+} from "./types/core.types";
 
 /** Default Tailwind-like breakpoints */
 const DEFAULT_BREAKPOINTS: BreakpointsMap = {
+  xs: "0px",
   sm: "640px",
   md: "768px",
   lg: "1024px",

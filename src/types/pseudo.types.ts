@@ -62,6 +62,14 @@ export type Pseudo =
   | "::spelling-error"
   | "::cue-region"
 
+  // functional selectors
+  | ":is"
+  | ":where"
+  | ":matches"
+  | ":dir"
+  | ":host"
+  | ":host-context"
+
   // Vendor or custom prefixes
   | ":-moz-focusring"
   | ":-moz-full-screen"

@@ -9,7 +9,7 @@ import {
   rebuildStylesheet,
 } from "../stylesheet";
 import { globalConfig, styleRegistry } from "../globals";
-import { ParsedRules, Primitive } from "../types";
+import { ParsedRules, Primitive } from "../types/core.types";
 
 describe("getStylesheet", () => {
   beforeEach(() => {

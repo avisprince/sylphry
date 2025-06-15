@@ -1,5 +1,5 @@
 import { globalConfig, isUnitlessNumber, styleRegistry } from "./globals";
-import { ParsedRules, Primitive } from "./types";
+import { ParsedRules, Primitive } from "./types/core.types";
 import { toKebab } from "./utils";
 
 // Singleton stylesheet and registry

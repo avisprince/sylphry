@@ -1,14 +1,16 @@
 import { hashSignature, isObject, toKebab } from "./utils";
-import {
-  FlagsInput,
-  GlobalConfig,
-  NestedStyles,
-  ParsedRules,
-  Primitive,
-  PrimitiveOrCSSProperties,
-} from "./types";
 import { injectRules, rebuildStylesheet } from "./stylesheet";
 import { globalConfig, styleRegistry } from "./globals";
+import {
+  CreateStylesOptions,
+  FlagsInput,
+  GlobalConfig,
+  ParsedRules,
+  Primitive,
+  ProcessStylesOptions,
+  Style,
+} from "./types/core.types";
+import { CSSProperties } from "react";
 
 /** Initialize global settings, then rebuild all styles */
 export function initialize(options: Partial<GlobalConfig>): void {
@@ -29,20 +31,10 @@ export function setTheme(theme: string): void {
   rebuildStylesheet();
 }
 
-interface CreateStylesOptions {
-  /** Prefix for generated class names */
-  prefix?: string;
-}
-
-interface ProcessStylesOptions {
-  /** Prefix for generated class names */
-  prefix?: string;
-}
-
 /**
  * createStyles: supports object or array flags, type-safe keys, token autocomplete
  */
-export function createStyles<T extends Record<string, NestedStyles>>(
+export function createStyles<T extends Record<string, Style>>(
   definitions: T,
   options: CreateStylesOptions = {}
 ): {
@@ -139,12 +131,12 @@ export function normalizeFlags<T>(
 }
 
 /** Parse rules into raw buckets without formatting */
-export function parseRules(rules: NestedStyles): ParsedRules {
+export function parseRules(rules: Style): ParsedRules {
   const statics: ParsedRules["statics"] = [];
   const pseudos: ParsedRules["pseudos"] = [];
   const variants: ParsedRules["variants"] = {};
   const inlineRE = /^(\w+):(\w[\w-]*)(?::(\w+))?$/;
-  const rec = rules as Record<string, PrimitiveOrCSSProperties>;
+  const rec = rules as Record<string, Primitive | CSSProperties>;
 
   for (const key in rec) {
     const raw = rec[key];
