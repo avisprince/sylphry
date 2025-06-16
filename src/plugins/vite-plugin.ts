@@ -1,6 +1,6 @@
 import { cosmiconfigSync } from "cosmiconfig";
 import { PluginOption } from "vite";
-import { Config } from "./types/core.types";
+import { Config } from "../types/core.types";
 
 const VIRTUAL_ID = "sylphry/config";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;

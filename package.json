@@ -58,6 +58,6 @@
   },
   "exports": {
     ".": "./dist/index.js",
-    "./vite-plugin": "./dist/vitePlugin.js"
+    "./vite-plugin": "./dist/plugins/vite-plugin.js"
   }
 }
