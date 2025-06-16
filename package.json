@@ -1,6 +1,7 @@
 {
   "name": "sylphry",
   "version": "0.1.0",
+  "type": "module",
   "description": "Lightweight, atomic, zero-config, framework-agnostic CSS-in-JS with tokens, theming & responsive breakpoints.",
   "homepage": "https://github.com/avisprince/sylphry#readme",
   "bugs": {
@@ -53,11 +54,9 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.3"
   },
-  "peerDependencies": {
-    "vite": "^6.3.5"
-  },
   "exports": {
     ".": "./dist/index.js",
-    "./vite-plugin": "./dist/plugins/vite-plugin.js"
+    "./vite-plugin": "./dist/plugins/vite-plugin.js",
+    "./config": "./dist/plugins/config.js"
   }
 }
