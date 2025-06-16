@@ -37,6 +37,9 @@
     "lint": "eslint \"src/**/*.ts\"",
     "prepublishOnly": "npm run build && npm test"
   },
+  "dependencies": {
+    "cosmiconfig": "^9.0.0"
+  },
   "devDependencies": {
     "@types/jsdom": "^20.0.0",
     "@types/react": "^19.1.8",
@@ -47,6 +50,14 @@
     "jsdom": "^26.1.0",
     "react": "^19.1.0",
     "typescript": "^5.0.0",
+    "vite": "^6.3.5",
     "vitest": "^3.2.3"
+  },
+  "peerDependencies": {
+    "vite": "^6.3.5"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./vite-plugin": "./dist/vitePlugin.js"
   }
 }

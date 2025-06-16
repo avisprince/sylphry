@@ -1,4 +1,4 @@
-import { globalConfig } from "../globals";
+import { globalConfig } from "../config";
 import { ParsedRules, Primitive, Style } from "../types/core.types";
 import { PSEUDO_NAMES } from "../types/pseudo.types";
 import { isObject } from "../utils";

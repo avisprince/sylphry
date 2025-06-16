@@ -1,29 +1,16 @@
 import { hashSignature, isObject, toKebab } from "./utils";
 import { injectRules, rebuildStylesheet } from "./stylesheet";
-import { globalConfig, styleRegistry } from "./globals";
+import { styleRegistry } from "./globals";
 import {
   CreateStylesOptions,
   FlagsInput,
-  GlobalConfig,
   ParsedRules,
   Primitive,
   ProcessStylesOptions,
   Style,
 } from "./types/core.types";
 import { CSSProperties } from "react";
-
-/** Initialize global settings, then rebuild all styles */
-export function initialize(options: Partial<GlobalConfig>): void {
-  globalConfig.tokens = options.tokens ?? globalConfig.tokens;
-  globalConfig.defaultUnit = options.defaultUnit ?? globalConfig.defaultUnit;
-  globalConfig.activeTheme = options.activeTheme ?? globalConfig.activeTheme;
-  globalConfig.breakpoints = {
-    ...globalConfig.breakpoints,
-    ...(options.breakpoints ?? {}),
-  };
-
-  rebuildStylesheet();
-}
+import { globalConfig } from "./config";
 
 /** Switch active theme and rebuild only dynamic styles */
 export function setTheme(theme: string): void {

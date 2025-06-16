@@ -1,4 +1,5 @@
-import { globalConfig, isUnitlessNumber, styleRegistry } from "./globals";
+import { globalConfig } from "./config";
+import { isUnitlessNumber, styleRegistry } from "./globals";
 import { ParsedRules, Primitive } from "./types/core.types";
 import { toKebab } from "./utils";
 
@@ -49,9 +50,9 @@ export function format(k: string, v: Primitive): string {
     const tokenRE = /\$([A-Za-z0-9_]+)(?::([A-Za-z0-9_]+))?\$/g;
     return v.replace(tokenRE, (_, t1, t2) => {
       const theme = t2 ? t1 : globalConfig.activeTheme;
-      const key = t2 || t1;
-      const src = globalConfig.tokens[theme] || {};
-      const def = globalConfig.tokens["default"] || {};
+      const key: string = t2 || t1;
+      const src = globalConfig.themes[theme] || {};
+      const def = globalConfig.themes["default"] || {};
       return src[key] ?? def[key] ?? `$${t1}${t2 ? `:${t2}` : ""}$`;
     });
   }

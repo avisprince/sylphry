@@ -8,11 +8,13 @@ type TokenRef = `$${string}$`;
 type TokensMap = Record<string, string>;
 export type TokensDefinition = Record<string, TokensMap>;
 
-export type GlobalConfig = {
+export type Config = {
   /** Responsive breakpoints override */
   breakpoints: BreakpointsMap;
-  /** Theme tokens map */
-  tokens: TokensDefinition;
+  /** Tokens */
+  tokens: TokensMap;
+  /** Themes */
+  themes: TokensDefinition;
   /** Default unit for numeric values */
   defaultUnit: string;
   /** The active theme - defaults to "default" */

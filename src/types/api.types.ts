@@ -1,11 +1,4 @@
-import {
-  CreateStylesOptions,
-  GlobalConfig,
-  ProcessStylesOptions,
-  Style,
-} from "./core.types";
-
-export declare function initialize(options: Partial<GlobalConfig>): void;
+import { CreateStylesOptions, ProcessStylesOptions, Style } from "./core.types";
 
 export declare function setTheme(theme: string): void;
 

@@ -1,27 +1,4 @@
-import {
-  BreakpointsMap,
-  GlobalConfig,
-  StyleRegistry,
-  TokensDefinition,
-} from "./types/core.types";
-
-/** Default Tailwind-like breakpoints */
-const DEFAULT_BREAKPOINTS: BreakpointsMap = {
-  xs: "0px",
-  sm: "640px",
-  md: "768px",
-  lg: "1024px",
-  xl: "1280px",
-  "2xl": "1536px",
-};
-
-/** Global configuration & active theme */
-export const globalConfig: GlobalConfig = {
-  breakpoints: { ...DEFAULT_BREAKPOINTS } as BreakpointsMap,
-  tokens: {} as TokensDefinition,
-  defaultUnit: "px",
-  activeTheme: "default",
-};
+import { StyleRegistry } from "./types/core.types";
 
 /** Registry of styles across application */
 export const styleRegistry: StyleRegistry = new Map();

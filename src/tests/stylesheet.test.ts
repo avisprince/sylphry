@@ -8,8 +8,9 @@ import {
   injectRules,
   rebuildStylesheet,
 } from "../stylesheet";
-import { globalConfig, styleRegistry } from "../globals";
+import { styleRegistry } from "../globals";
 import { ParsedRules, Primitive } from "../types/core.types";
+import { globalConfig } from "../config";
 
 describe("getStylesheet", () => {
   beforeEach(() => {
@@ -73,7 +74,8 @@ describe("injectRules", () => {
     // Reset globals
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
-    globalConfig.tokens = { default: {} };
+    globalConfig.tokens = {};
+    globalConfig.themes = { default: {} };
     globalConfig.breakpoints = { sm: "640px" };
   });
 
@@ -134,7 +136,7 @@ describe("injectRules", () => {
   });
 
   it("resolves tokens in string values", () => {
-    globalConfig.tokens = {
+    globalConfig.themes = {
       default: { primary: "#112233" },
     };
 
@@ -218,7 +220,8 @@ describe("format()", () => {
     // Reset globals
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
-    globalConfig.tokens = {
+    globalConfig.tokens = {};
+    globalConfig.themes = {
       default: { foo: "FOO", baz: "#ABC" },
     };
   });
@@ -238,19 +241,19 @@ describe("format()", () => {
   });
 
   it("resolves multi-token strings", () => {
-    globalConfig.tokens.dark = { foo: "DARCOLOR" };
+    globalConfig.themes.dark = { foo: "DARCOLOR" };
     const input = "1px solid $foo$ and $baz$";
     // Only active tokens replaced, baz from default
     expect(format("border", input)).toBe("1px solid FOO and #ABC");
   });
 
   it("resolves explicit-theme token syntax", () => {
-    globalConfig.tokens.dark = { foo: "DARCOLOR" };
+    globalConfig.themes.dark = { foo: "DARCOLOR" };
     expect(format("color", "$dark:foo$")).toBe("DARCOLOR");
   });
 
   it("falls back to default token when explicit theme missing key", () => {
-    globalConfig.tokens.dark = {};
+    globalConfig.themes.dark = {};
     expect(format("color", "$dark:foo$")).toBe("FOO");
   });
 

@@ -1,41 +1,20 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as stylesheet from "../stylesheet";
-import { globalConfig, styleRegistry } from "../globals";
-import {
-  normalizeFlags,
-  parseRules,
-  initialize,
-  setTheme,
-  createStyles,
-} from "../core";
+import { styleRegistry } from "../globals";
+import { normalizeFlags, parseRules, setTheme, createStyles } from "../core";
 import { FlagsInput, ParsedRules, Style } from "../types/core.types";
+import { globalConfig } from "../config";
 
 describe("API functions", () => {
   beforeEach(() => {
     // Reset globalConfig to defaults
-    globalConfig.tokens = { default: {} };
+    globalConfig.tokens = {};
+    globalConfig.themes = { default: {} };
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
     globalConfig.breakpoints = { sm: "640px" };
     styleRegistry.clear();
     vi.spyOn(stylesheet, "rebuildStylesheet").mockImplementation(() => {});
-  });
-
-  describe("initialize()", () => {
-    it("updates only provided options and calls rebuildStylesheet", () => {
-      const initialBreakpoints = { sm: "640px" };
-
-      initialize({ defaultUnit: "em" });
-      expect(globalConfig.defaultUnit).toBe("em");
-      expect(globalConfig.breakpoints).toEqual(initialBreakpoints);
-
-      initialize({ activeTheme: "theme1" });
-      expect(globalConfig.defaultUnit).toBe("em");
-      expect(globalConfig.breakpoints).toEqual(initialBreakpoints);
-      expect(globalConfig.activeTheme).toEqual("theme1");
-
-      expect(stylesheet.rebuildStylesheet).toHaveBeenCalledTimes(2);
-    });
   });
 
   describe("setTheme()", () => {
