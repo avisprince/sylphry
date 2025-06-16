@@ -11,6 +11,7 @@ import {
 } from "./types/core.types";
 import { CSSProperties } from "react";
 import { globalConfig } from "./config";
+import { parseRules } from "./in-progress/parseRules";
 
 /** Switch active theme and rebuild only dynamic styles */
 export function setTheme(theme: string): void {
@@ -118,7 +119,7 @@ export function normalizeFlags<T>(
 }
 
 /** Parse rules into raw buckets without formatting */
-export function parseRules(rules: Style): ParsedRules {
+export function parseRules_v0(rules: Style): ParsedRules {
   const statics: ParsedRules["statics"] = [];
   const pseudos: ParsedRules["pseudos"] = [];
   const variants: ParsedRules["variants"] = {};

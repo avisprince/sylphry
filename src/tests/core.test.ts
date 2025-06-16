@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as stylesheet from "../stylesheet";
 import { styleRegistry } from "../globals";
-import { normalizeFlags, parseRules, setTheme, createStyles } from "../core";
+import { normalizeFlags, parseRules_v0, setTheme, createStyles } from "../core";
 import { FlagsInput, ParsedRules, Style } from "../types/core.types";
 import { globalConfig } from "../config";
 
@@ -67,7 +67,7 @@ describe("API functions", () => {
         "fake:height": 10,
       };
 
-      const parsed = parseRules(rules);
+      const parsed = parseRules_v0(rules);
 
       expect(parsed.statics).toEqual([
         ["color", "red"],

@@ -279,7 +279,7 @@ describe("format() – default‐token fallback", () => {
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
     // Simulate missing default map:
-    globalConfig.tokens = {};
+    globalConfig.themes = {};
   });
 
   it("falls back to empty object when default tokens are missing", () => {
