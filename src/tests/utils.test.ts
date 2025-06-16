@@ -38,32 +38,37 @@ describe("toKebab", () => {
   });
 });
 
-describe("isObject", () => {
+describe("isObject type guard", () => {
+  it("returns false for null and undefined", () => {
+    expect(isObject(null)).toBe(false);
+    expect(isObject(undefined)).toBe(false);
+  });
+
+  it("returns false for primitive values", () => {
+    expect(isObject(42)).toBe(false);
+    expect(isObject("hello")).toBe(false);
+    expect(isObject(true)).toBe(false);
+    expect(isObject(Symbol("sym"))).toBe(false);
+  });
+
+  it("returns false for arrays", () => {
+    expect(isObject([])).toBe(false);
+    expect(isObject([1, 2, 3])).toBe(false);
+  });
+
+  it("returns false for functions", () => {
+    expect(isObject(() => {})).toBe(false);
+    expect(isObject(function () {})).toBe(false);
+  });
+
   it("returns true for plain objects", () => {
     expect(isObject({})).toBe(true);
-    expect(isObject({ a: 1, b: 2 })).toBe(true);
+    expect(isObject({ foo: "bar", baz: 0 })).toBe(true);
   });
 
-  it("returns true for arrays", () => {
-    expect(isObject([])).toBe(true);
-    expect(isObject([1, 2, 3])).toBe(true);
-  });
-
-  it("returns true for null (typeof null is 'object')", () => {
-    expect(isObject(null)).toBe(true);
-  });
-
-  it("returns true for Dates and other object wrappers", () => {
+  it("returns true for other non‐array objects", () => {
     expect(isObject(new Date())).toBe(true);
+    expect(isObject(/abc/)).toBe(true);
     expect(isObject(Object.create(null))).toBe(true);
-  });
-
-  it("returns false for primitives", () => {
-    expect(isObject(undefined)).toBe(false);
-    expect(isObject(123)).toBe(false);
-    expect(isObject("string")).toBe(false);
-    expect(isObject(true)).toBe(false);
-    expect(isObject(() => {})).toBe(false);
-    expect(isObject(Symbol("sym"))).toBe(false);
   });
 });

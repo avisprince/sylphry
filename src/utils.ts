@@ -10,6 +10,6 @@ export function toKebab(s: string): string {
   return s.replace(/([A-Z])/g, "-$1").toLowerCase();
 }
 
-export function isObject(v: unknown): boolean {
-  return typeof v === "object";
+export function isObject(val: unknown): val is Record<string, unknown> {
+  return typeof val === "object" && val !== null && !Array.isArray(val);
 }
