@@ -1,7 +1,7 @@
 import { globalConfig } from "./config";
 import { isUnitlessNumber, styleRegistry } from "./globals";
 import { ParsedRules, Primitive } from "./types/core.types";
-import { toKebab } from "./utils";
+import { isObject, toKebab } from "./utils";
 
 // Singleton stylesheet and registry
 let styleSheet: CSSStyleSheet | null = null;
@@ -38,69 +38,89 @@ export function rebuildStylesheet(): void {
   });
 }
 
+function getTokenValue(token: string): string | null {
+  const parts = token.split(":").filter(Boolean);
+  const topKey = parts[0];
+  const root =
+    topKey in globalConfig.tokens
+      ? globalConfig.tokens
+      : globalConfig.tokens.default;
+
+  const value = parts.reduce((acc, key) => {
+    return isObject(acc) ? acc?.[key] : null;
+  }, root as unknown);
+
+  return isObject(value) || value == null ? null : String(value);
+}
+
 /** Format raw value: number→unit or resolve token */
-export function format(k: string, v: Primitive): string {
-  if (typeof v === "number") {
-    return k in isUnitlessNumber
-      ? String(v)
-      : `${v}${globalConfig.defaultUnit}`;
+export function format(key: string, value: Primitive): string {
+  if (typeof value === "number") {
+    return key in isUnitlessNumber
+      ? String(value)
+      : `${value}${globalConfig.defaultUnit}`;
   }
 
-  if (typeof v === "string") {
-    const tokenRE = /\$([A-Za-z0-9_]+)(?::([A-Za-z0-9_]+))?\$/g;
-    return v.replace(tokenRE, (_, t1, t2) => {
-      const theme = t2 ? t1 : globalConfig.activeTheme;
-      const key: string = t2 || t1;
-      const src = globalConfig.themes[theme] || {};
-      const def = globalConfig.themes["default"] || {};
-      return src[key] ?? def[key] ?? `$${t1}${t2 ? `:${t2}` : ""}$`;
+  if (typeof value === "string") {
+    const tokenRegex = /\$([^$]+)\$/g;
+
+    return value.replace(tokenRegex, (match, innerToken) => {
+      return getTokenValue(innerToken) ?? match;
     });
   }
 
-  return String(v);
+  return String(value);
 }
 
 /** Inject formatted CSS rules */
 export function injectRules(className: string, parsedArr: ParsedRules[]) {
-  // Statics
   const sheet = getStylesheet();
-  const mapS = new Map<string, string>();
+  const statics = new Map<string, string>();
+  const pseudos = new Map<string, Map<string, string>>();
+
+  // Statics
   parsedArr.forEach(pr =>
-    pr.statics.forEach(([p, r]) => mapS.set(toKebab(p), format(p, r)))
+    pr.statics.forEach(([p, r]) => statics.set(toKebab(p), format(p, r)))
   );
-  if (mapS.size) {
-    const decl = Array.from(mapS)
+
+  if (statics.size) {
+    const decl = Array.from(statics)
       .map(([k, v]) => `${k}:${v};`)
       .join(" ");
     sheet.insertRule(`.${className}{${decl}}`, sheet.cssRules.length);
   }
+
   // Pseudos
-  const mapP = new Map<string, Map<string, string>>();
   parsedArr.forEach(pr =>
     pr.pseudos.forEach(([ps, p, r]) => {
-      const sub = mapP.get(ps) || new Map<string, string>();
+      const sub = pseudos.get(ps) || new Map<string, string>();
       sub.set(toKebab(p), format(p, r));
-      mapP.set(ps, sub);
+      pseudos.set(ps, sub);
     })
   );
-  mapP.forEach((sub, ps) => {
+
+  pseudos.forEach((sub, ps) => {
     const decl = Array.from(sub)
       .map(([k, v]) => `${k}:${v};`)
       .join(" ");
     sheet.insertRule(`.${className}:${ps}{${decl}}`, sheet.cssRules.length);
   });
+
   // Variants
   Object.entries(globalConfig.breakpoints).forEach(([bp, minW]) => {
     const mapV = new Map<string, string>();
+
     parsedArr.forEach(pr =>
       pr.variants[bp]?.forEach(v =>
         mapV.set(toKebab(v.prop), format(className, v.raw))
       )
     );
+
     if (mapV.size) {
       const decl = Array.from(mapV)
         .map(([k, v]) => `${k}:${v};`)
         .join(" ");
+
       sheet.insertRule(
         `@media(min-width:${minW}){.${className}{${decl}}}`,
         sheet.cssRules.length

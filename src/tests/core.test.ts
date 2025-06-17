@@ -9,7 +9,7 @@ describe("API functions", () => {
   beforeEach(() => {
     // Reset globalConfig to defaults
     globalConfig.tokens = {};
-    globalConfig.themes = { default: {} };
+    globalConfig.tokens = { default: {} };
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
     globalConfig.breakpoints = { sm: "640px" };

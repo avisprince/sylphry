@@ -24,8 +24,7 @@ describe("globalConfig", () => {
         xl: "1280px",
         "2xl": "1536px",
       },
-      tokens: {},
-      themes: {
+      tokens: {
         default: {},
       },
       defaultUnit: "px",
@@ -36,8 +35,7 @@ describe("globalConfig", () => {
   it("merges userConfig overrides correctly", async () => {
     const userMock = {
       breakpoints: { sm: "500px", custom: "2000px" },
-      tokens: { primary: "#ff00ff" },
-      themes: { dark: { background: "#000" } },
+      tokens: { primary: "#ff00ff", dark: { background: "#000" } },
       defaultUnit: "em",
       activeTheme: "dark",
     };
@@ -50,13 +48,11 @@ describe("globalConfig", () => {
 
     // Tokens merged
     expect(cfg.tokens.primary).toBe("#ff00ff");
-
-    // Themes merged
-    expect(Object.keys(cfg.themes)).toEqual(
-      expect.arrayContaining(["default", "dark"])
+    expect(Object.keys(cfg.tokens)).toEqual(
+      expect.arrayContaining(["primary", "default", "dark"])
     );
-    expect(cfg.themes.default).toEqual({});
-    expect(cfg.themes.dark).toEqual({ background: "#000" });
+    expect(cfg.tokens.default).toEqual({});
+    expect(cfg.tokens.dark).toEqual({ background: "#000" });
 
     // defaultUnit & activeTheme overridden
     expect(cfg.defaultUnit).toBe("em");
@@ -67,10 +63,10 @@ describe("globalConfig", () => {
     const cfgUndefined = await loadGlobalConfigWithMock(undefined);
     expect(cfgUndefined.defaultUnit).toBe("px");
     expect(cfgUndefined.breakpoints.sm).toBe("640px");
-    expect(cfgUndefined.themes.default).toEqual({});
+    expect(cfgUndefined.tokens.default).toEqual({});
 
     const cfgNull = await loadGlobalConfigWithMock(null);
     expect(cfgNull.defaultUnit).toBe("px");
-    expect(cfgNull.tokens).toEqual({});
+    expect(cfgNull.tokens).toEqual({ default: {} });
   });
 });

@@ -1,25 +1,26 @@
 import { CSSProperties } from "react";
 import { Pseudo } from "./pseudo.types";
 
+export type Primitive = string | number;
+
 type BreakpointNames = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 export type BreakpointsMap = Record<BreakpointNames | string, string>;
 
-type TokenRef = `$${string}$`;
-type TokensMap = Record<string, string>;
-export type TokensDefinition = Record<string, TokensMap>;
+export type ThemeTokens = Record<string, Primitive | Record<string, Primitive>>;
+export type Tokens = Record<string, ThemeTokens>;
 
 export type Config = {
   /** Responsive breakpoints override */
   breakpoints: BreakpointsMap;
   /** Tokens */
-  tokens: TokensMap;
-  /** Themes */
-  themes: TokensDefinition;
+  tokens: Tokens;
   /** Default unit for numeric values */
   defaultUnit: string;
   /** The active theme - defaults to "default" */
   activeTheme: string;
 };
+
+type TokenRef = `$${string}$`;
 
 export type Style =
   | ({
@@ -47,8 +48,6 @@ export type CreateStylesOptions = {
 export type ProcessStylesOptions = {
   prefix?: string;
 };
-
-export type Primitive = string | number;
 
 export interface ParsedRules {
   statics: Array<[string, Primitive]>;

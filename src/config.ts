@@ -10,8 +10,7 @@ const defaultConfig: Config = {
     xl: "1280px",
     "2xl": "1536px",
   },
-  tokens: {},
-  themes: {
+  tokens: {
     default: {},
   },
   defaultUnit: "px",
@@ -27,10 +26,6 @@ export const globalConfig: Config = userConfig
       tokens: {
         ...defaultConfig.tokens,
         ...(userConfig.tokens ?? {}),
-      },
-      themes: {
-        ...defaultConfig.themes,
-        ...(userConfig.themes ?? {}),
       },
       defaultUnit: userConfig.defaultUnit ?? defaultConfig.defaultUnit,
       activeTheme: userConfig.activeTheme ?? defaultConfig.activeTheme,

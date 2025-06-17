@@ -14,10 +14,14 @@ export function parseRules(rules: Style): ParsedRules {
   const variants: ParsedRules["variants"] = {};
 
   function walk(node: unknown, ctx: Context = { bps: [], pseudos: [] }) {
-    if (!isObject(node)) return;
+    if (!isObject(node)) {
+      return;
+    }
 
     for (const [key, rawValue] of Object.entries(node)) {
-      if (rawValue == null) continue;
+      if (rawValue == null) {
+        continue;
+      }
 
       // split into parts around “:”
       const parts = key.split(":").filter(Boolean);
@@ -34,6 +38,7 @@ export function parseRules(rules: Style): ParsedRules {
             )}]`
           );
         }
+
         const prop = props[0];
         const allBps = [...ctx.bps, ...bps];
         const allPseus = [...ctx.pseudos, ...pseus];
@@ -42,7 +47,7 @@ export function parseRules(rules: Style): ParsedRules {
         if (allBps.length) {
           for (const bp of allBps) {
             variants[bp] ||= [];
-            variants[bp]!.push({ prop, raw: rawValue as Primitive, pseudo });
+            variants[bp].push({ prop, raw: rawValue as Primitive, pseudo });
           }
         } else if (allPseus.length) {
           for (const ps of allPseus) {
@@ -51,6 +56,7 @@ export function parseRules(rules: Style): ParsedRules {
         } else {
           statics.push([prop, rawValue as Primitive]);
         }
+
         continue;
       } else {
         // 2) Grouping object:
@@ -69,6 +75,7 @@ export function parseRules(rules: Style): ParsedRules {
             )}]`
           );
         }
+
         // otherwise treat as grouping — accumulate qualifiers and recurse
         walk(rawValue, {
           bps: [...ctx.bps, ...bps],

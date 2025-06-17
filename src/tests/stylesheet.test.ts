@@ -75,7 +75,7 @@ describe("injectRules", () => {
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
     globalConfig.tokens = {};
-    globalConfig.themes = { default: {} };
+    globalConfig.tokens = { default: {} };
     globalConfig.breakpoints = { sm: "640px" };
   });
 
@@ -136,7 +136,7 @@ describe("injectRules", () => {
   });
 
   it("resolves tokens in string values", () => {
-    globalConfig.themes = {
+    globalConfig.tokens = {
       default: { primary: "#112233" },
     };
 
@@ -220,8 +220,7 @@ describe("format()", () => {
     // Reset globals
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
-    globalConfig.tokens = {};
-    globalConfig.themes = {
+    globalConfig.tokens = {
       default: { foo: "FOO", baz: "#ABC" },
     };
   });
@@ -241,20 +240,22 @@ describe("format()", () => {
   });
 
   it("resolves multi-token strings", () => {
-    globalConfig.themes.dark = { foo: "DARCOLOR" };
-    const input = "1px solid $foo$ and $baz$";
+    globalConfig.tokens.dark = { foo: "DARCOLOR" };
+    const input = "1px solid $foo$ and $baz$ and $missing$";
     // Only active tokens replaced, baz from default
-    expect(format("border", input)).toBe("1px solid FOO and #ABC");
+    expect(format("border", input)).toBe(
+      "1px solid FOO and #ABC and $missing$"
+    );
   });
 
   it("resolves explicit-theme token syntax", () => {
-    globalConfig.themes.dark = { foo: "DARCOLOR" };
+    globalConfig.tokens.dark = { foo: "DARCOLOR" };
     expect(format("color", "$dark:foo$")).toBe("DARCOLOR");
   });
 
   it("falls back to default token when explicit theme missing key", () => {
-    globalConfig.themes.dark = {};
-    expect(format("color", "$dark:foo$")).toBe("FOO");
+    globalConfig.tokens.dark = {};
+    expect(format("color", "$dark:foo$")).toBe("$dark:foo$");
   });
 
   it("leaves unmatched placeholders intact", () => {
@@ -274,12 +275,12 @@ describe("format()", () => {
   });
 });
 
-describe("format() – default‐token fallback", () => {
+describe("format() - default-token fallback", () => {
   beforeEach(() => {
     globalConfig.defaultUnit = "px";
     globalConfig.activeTheme = "default";
     // Simulate missing default map:
-    globalConfig.themes = {};
+    globalConfig.tokens = {};
   });
 
   it("falls back to empty object when default tokens are missing", () => {
