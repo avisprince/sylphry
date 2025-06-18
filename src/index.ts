@@ -1,1 +1,1 @@
-export { setTheme, createStyles } from "./core";
+export { setTheme, createStyles } from "./api";

@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { Pseudo } from "./pseudo.types";
-import { CSSProperty } from "./css-props.types";
+import { CSSProperty } from "./cssProps.types";
 
 export type Primitive = string | number;
 
@@ -52,15 +52,6 @@ export type ProcessStylesOptions = {
   prefix?: string;
 };
 
-export interface ParsedRules {
-  statics: Array<[string, Primitive]>;
-  pseudos: Array<[string, string, Primitive]>; // [pseudo, prop, raw]
-  variants: Record<
-    string,
-    Array<{ prop: string; raw: Primitive; pseudo?: string }>
-  >;
-}
-
 export type ParsedStyle = {
   breakpoints?: string[];
   prop?: CSSProperty;
@@ -69,7 +60,7 @@ export type ParsedStyle = {
   invalid?: boolean;
 };
 
-export type StyleRegistry = Map<string, ParsedRules[]>;
+export type StyleRegistry = Map<string, ParsedStyle[]>;
 
 export type FlagsInput<T> =
   | Partial<Record<keyof T, boolean>>

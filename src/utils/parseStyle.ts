@@ -1,8 +1,8 @@
 import { globalConfig } from "../config";
 import { ParsedStyle, Primitive, Style } from "../types/core.types";
-import { CSS_PROPS_SET, CSSProperty } from "../types/css-props.types";
+import { CSS_PROPS_SET, CSSProperty } from "../types/cssProps.types";
 import { Pseudo, PSEUDO_NAMES } from "../types/pseudo.types";
-import { isObject } from "../utils";
+import { isObject } from "./utils";
 
 export function cloneParsedStyle(ps: ParsedStyle) {
   return {
