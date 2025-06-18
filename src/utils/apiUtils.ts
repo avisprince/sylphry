@@ -1,5 +1,5 @@
 import { globalConfig } from "../config";
-import { ParsedStyle, Primitive, Style } from "../types/core.types";
+import { FlagsInput, ParsedStyle, Primitive, Style } from "../types/core.types";
 import { CSS_PROPS_SET, CSSProperty } from "../types/cssProps.types";
 import { Pseudo, PSEUDO_NAMES } from "../types/pseudo.types";
 import { isObject } from "./utils";
@@ -79,4 +79,35 @@ export function parseStyle(
   });
 
   return parsedStyles;
+}
+
+export function normalizeFlags<T>(
+  input: FlagsInput<T>
+): Partial<Record<keyof T, boolean>> {
+  if (!Array.isArray(input)) {
+    return input;
+  }
+
+  const flags: Partial<Record<keyof T, boolean>> = {};
+
+  return input.reduce((acc, item) => {
+    if (Array.isArray(item)) {
+      const [k, v] = item;
+      acc[k] = v;
+    } else {
+      acc[item] = true;
+    }
+
+    return acc;
+  }, flags);
+}
+
+export function compressStyles(styles: ParsedStyle[]): string {
+  return styles
+    .map(({ breakpoints, pseudos, prop, value }) => {
+      const bps = breakpoints ? `${breakpoints?.join(":")}:` : "";
+      const pseudo = pseudos ? `${pseudos?.join(":")}:` : "";
+      return `${bps}${pseudo}${prop}=${value}`;
+    })
+    .join("|");
 }

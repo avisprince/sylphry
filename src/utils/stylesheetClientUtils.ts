@@ -1,14 +1,12 @@
 import { globalConfig } from "../config";
 import { isUnitlessNumber } from "../globals";
-import { ParsedStyle, Primitive } from "../types/core.types";
+import { ParsedStyle, Primitive, Tokens } from "../types/core.types";
 import { Styles } from "../types/stylesheetClient.types";
 import { isObject, toKebab } from "./utils";
 
-function getTokenValue(token: string): string | null {
-  const { tokens, activeTheme } = globalConfig;
-
+function getTokenValue(token: string, tokens: Tokens): string | null {
   const parts = token.split(":").filter(Boolean);
-  const roots = [tokens, tokens[activeTheme], tokens.default];
+  const roots = [tokens, tokens[globalConfig.activeTheme], tokens.default];
 
   for (const root of roots) {
     const value = parts.reduce((acc, key) => {
@@ -24,7 +22,11 @@ function getTokenValue(token: string): string | null {
 }
 
 /** Format raw value: number→unit or resolve token */
-export function format(key: string, value: Primitive): string {
+export function format(
+  key: string,
+  value: Primitive,
+  tokens: Tokens = globalConfig.tokens
+): string {
   if (typeof value === "number") {
     return key in isUnitlessNumber
       ? String(value)
@@ -35,7 +37,7 @@ export function format(key: string, value: Primitive): string {
     const tokenRegex = /\$([^$]+)\$/g;
 
     return value.replace(tokenRegex, (match, innerToken) => {
-      return getTokenValue(innerToken) ?? match;
+      return getTokenValue(innerToken, tokens) ?? match;
     });
   }
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, ParsedStack } from "vitest";
 import * as stylesheet from "../stylesheetClient";
 import { styleRegistry } from "../globals";
-import { normalizeFlags, setTheme, createStyles } from "../api";
+import { setTheme, createStyles } from "../api";
 import { FlagsInput, ParsedStyle } from "../types/core.types";
 import { globalConfig } from "../config";
 
@@ -22,17 +22,6 @@ describe("API functions", () => {
       setTheme("dark");
       expect(globalConfig.activeTheme).toBe("dark");
       expect(stylesheet.rebuildStylesheet).toHaveBeenCalled();
-    });
-  });
-
-  describe("normalizeFlags()", () => {
-    it("returns object input unchanged", () => {
-      const input = { a: true, b: false } as FlagsInput<any>;
-      expect(normalizeFlags(input)).toEqual(input);
-    });
-    it("converts array input of keys and tuples to object", () => {
-      const input = ["x", ["y", false]] as FlagsInput<{ x: any; y: any }>;
-      expect(normalizeFlags(input)).toEqual({ x: true, y: false });
     });
   });
 
@@ -162,6 +151,28 @@ describe("API functions", () => {
             breakpoints: ["sm"],
             prop: "margin",
             value: 12,
+          }),
+        ])
+      );
+
+      spy.mockRestore();
+    });
+
+    it("properly handles an optional tokens param", () => {
+      const defs = { box: { "sm:margin": "$foo$ $fizz$" } };
+      const styles = createStyles(defs);
+      const spy = vi.spyOn(stylesheet, "injectStyles");
+
+      const tokens = { foo: "bar" };
+      const cls = styles(["box"], { tokens });
+
+      expect(spy).toHaveBeenCalledWith(
+        cls,
+        expect.arrayContaining([
+          expect.objectContaining({
+            breakpoints: ["sm"],
+            prop: "margin",
+            value: "bar $fizz$",
           }),
         ])
       );

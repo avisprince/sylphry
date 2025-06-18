@@ -9,7 +9,8 @@ import {
   StyleMap,
 } from "./types/core.types";
 import { globalConfig } from "./config";
-import { parseStyle } from "./utils/parseStyle";
+import { compressStyles, normalizeFlags, parseStyle } from "./utils/apiUtils";
+import { format } from "./utils/stylesheetClientUtils";
 
 /** Switch active theme and rebuild only dynamic styles */
 export function setTheme(theme: string): void {
@@ -47,9 +48,9 @@ export function createStyles(
 
   function processStyles(
     input: FlagsInput<StyleMap>,
-    options: ProcessStylesOptions = {}
+    options?: ProcessStylesOptions
   ): string {
-    const prefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
+    const prefix = options?.prefix ? `${toKebab(options.prefix)}-` : "";
 
     // Determine active keys in insertion order
     const flags = normalizeFlags<StyleMap>(input);
@@ -70,10 +71,17 @@ export function createStyles(
     const name = activeKeys.map(k => toKebab(String(k))).join("_");
     const className = `${prefix || globalPrefix}${name}_${hash}`;
 
+    const finalStyles = options?.tokens
+      ? parsedActive.map(style => ({
+          ...style,
+          value: format(style.prop!, style.value!, options.tokens),
+        }))
+      : parsedActive;
+
     // Register & inject once
     if (!styleRegistry.has(className)) {
-      styleRegistry.set(className, parsedActive);
-      injectStyles(className, parsedActive);
+      styleRegistry.set(className, finalStyles);
+      injectStyles(className, finalStyles);
     }
 
     return className;
@@ -91,35 +99,4 @@ export function createStyles(
   });
 
   return combo;
-}
-
-export function normalizeFlags<T>(
-  input: FlagsInput<T>
-): Partial<Record<keyof T, boolean>> {
-  if (!Array.isArray(input)) {
-    return input;
-  }
-
-  const flags: Partial<Record<keyof T, boolean>> = {};
-
-  return input.reduce((acc, item) => {
-    if (Array.isArray(item)) {
-      const [k, v] = item;
-      acc[k] = v;
-    } else {
-      acc[item] = true;
-    }
-
-    return acc;
-  }, flags);
-}
-
-function compressStyles(styles: ParsedStyle[]): string {
-  return styles
-    .map(({ breakpoints, pseudos, prop, value }) => {
-      const bps = breakpoints ? `${breakpoints?.join(":")}:` : "";
-      const pseudo = pseudos ? `${pseudos?.join(":")}:` : "";
-      return `${bps}${pseudo}${prop}=${value}`;
-    })
-    .join("|");
 }

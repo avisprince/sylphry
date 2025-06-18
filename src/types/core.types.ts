@@ -8,7 +8,7 @@ type BreakpointNames = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 export type BreakpointsMap = Record<BreakpointNames | string, string>;
 
 export type ThemeTokens = Record<string, Primitive | Record<string, Primitive>>;
-export type Tokens = Record<string, ThemeTokens>;
+export type Tokens = Record<string, Primitive | ThemeTokens>;
 
 export type Config = {
   /** Responsive breakpoints override */
@@ -50,6 +50,7 @@ export type CreateStylesOptions = {
 
 export type ProcessStylesOptions = {
   prefix?: string;
+  tokens?: Tokens;
 };
 
 export type ParsedStyle = {

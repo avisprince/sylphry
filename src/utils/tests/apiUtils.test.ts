@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { ParsedStyle } from "../../types/core.types";
-import { cloneParsedStyle, parseCompositeKey, parseStyle } from "../parseStyle";
+import { FlagsInput, ParsedStyle } from "../../types/core.types";
+import {
+  cloneParsedStyle,
+  compressStyles,
+  normalizeFlags,
+  parseCompositeKey,
+  parseStyle,
+} from "../apiUtils";
 
 describe("cloneParsedStyle", () => {
   it("should clone all fields", () => {
@@ -266,5 +272,44 @@ describe("parseStyle", () => {
     });
 
     expect(val).toEqual([]);
+  });
+});
+
+describe("normalizeFlags()", () => {
+  it("returns object input unchanged", () => {
+    const input = { a: true, b: false } as FlagsInput<any>;
+    expect(normalizeFlags(input)).toEqual(input);
+  });
+  it("converts array input of keys and tuples to object", () => {
+    const input = ["x", ["y", false]] as FlagsInput<{ x: any; y: any }>;
+    expect(normalizeFlags(input)).toEqual({ x: true, y: false });
+  });
+});
+
+describe("compressStyles", () => {
+  it("properly compresses a list of styles", () => {
+    const styles: ParsedStyle[] = [
+      {
+        breakpoints: ["sm", "md"],
+        pseudos: ["hover", "active"],
+        prop: "padding",
+        value: 10,
+      },
+      {
+        prop: "padding",
+        value: 10,
+      },
+      {
+        breakpoints: ["lg"],
+        prop: "color",
+        value: "green",
+      },
+    ];
+
+    const compressed = compressStyles(styles);
+
+    expect(compressed).toEqual(
+      "sm:md:hover:active:padding=10|padding=10|lg:color=green"
+    );
   });
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { __resetStylesheet } from "../../stylesheetClient";
 import { globalConfig } from "../../config";
-import { format } from "../stylesheetClient.utils";
+import { format } from "../stylesheetClientUtils";
 
 describe("format()", () => {
   beforeEach(() => {
@@ -60,6 +60,12 @@ describe("format()", () => {
     expect(format("dummy", { x: 1 } as any)).toBe("[object Object]");
     const sym = Symbol("s");
     expect(format("dummy", sym as any)).toBe(sym.toString());
+  });
+
+  it("uses provided tokens over defaulting to global tokens", () => {
+    globalConfig.tokens.dark = { foo: "DARCOLOR" };
+    const localTokens = { dark: { foo: "bar" } };
+    expect(format("color", "$dark:foo$", localTokens)).toBe("bar");
   });
 });
 

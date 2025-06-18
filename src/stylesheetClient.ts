@@ -1,6 +1,6 @@
 import { globalConfig } from "./config";
 import { styleRegistry } from "./globals";
-import { processStyle } from "./utils/stylesheetClient.utils";
+import { processStyle } from "./utils/stylesheetClientUtils";
 import { ParsedStyle } from "./types/core.types";
 import { Styles } from "./types/stylesheetClient.types";
 
