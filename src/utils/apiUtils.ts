@@ -1,8 +1,7 @@
 import { globalConfig } from "../config";
 import { FlagsInput, ParsedStyle, Primitive, Style } from "../types/core.types";
-import { CSS_PROPS_SET, CSSProperty } from "../types/cssProps.types";
 import { Pseudo, PSEUDO_NAMES } from "../types/pseudo.types";
-import { isObject } from "./utils";
+import { isCssProperty, isObject } from "./utils";
 
 export function cloneParsedStyle(ps: ParsedStyle) {
   return {
@@ -27,9 +26,9 @@ export function parseCompositeKey(
       } else if (PSEUDO_NAMES.has(k)) {
         acc.pseudos ||= [];
         acc.pseudos.push(k as Pseudo);
-      } else if (CSS_PROPS_SET.has(k)) {
+      } else if (isCssProperty(k)) {
         // Cannot have more than one prop
-        acc.prop ? (acc.invalid = true) : (acc.prop = k as CSSProperty);
+        acc.prop ? (acc.invalid = true) : (acc.prop = k);
       } else {
         // Unknown key value
         acc.invalid = true;

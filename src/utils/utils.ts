@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 /** DJB2 hash → base36 */
 export function hashSignature(sig: string): string {
   let h = 5381;
@@ -12,4 +14,14 @@ export function toKebab(s: string): string {
 
 export function isObject(val: unknown): val is Record<string, unknown> {
   return typeof val === "object" && val !== null && !Array.isArray(val);
+}
+
+const _divStyle = document.createElement("div").style;
+
+/**
+ * @param key any string
+ * @returns true if it’s a valid camelCased CSS property
+ */
+export function isCssProperty(key: string): key is keyof CSSProperties {
+  return key in _divStyle;
 }

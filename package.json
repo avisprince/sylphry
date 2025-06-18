@@ -49,8 +49,7 @@
     "@vitest/coverage-istanbul": "^3.2.3",
     "eslint": "^8.0.0",
     "jsdom": "^26.1.0",
-    "react": "^19.1.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.2.3"
   },

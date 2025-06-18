@@ -1,6 +1,5 @@
-import { CSSProperties } from "react";
 import { Pseudo } from "./pseudo.types";
-import { CSSProperty } from "./cssProps.types";
+import { CSSProperties } from "react";
 
 export type Primitive = string | number;
 
@@ -25,8 +24,8 @@ type TokenRef = `$${string}$`;
 
 export type Style =
   | ({
-      // a) Any valid React CSS property or token
-      [K in keyof CSSProperties]?: CSSProperties[K] | TokenRef;
+      // a) Any valid React CSS property
+      [K in keyof CSSProperties]?: CSSProperties[K];
     } & {
       // b) Nested pseudo selectors
       [P in Pseudo]?: Style;
@@ -39,7 +38,7 @@ export type Style =
     })
   | {
       // e) Custom breakpoint or composite keys
-      [key: string]: Style | TokenRef | string | number;
+      [key: string]: Style | TokenRef | Primitive;
     };
 
 export type StyleMap = Record<string, Style>;
@@ -55,7 +54,7 @@ export type ProcessStylesOptions = {
 
 export type ParsedStyle = {
   breakpoints?: string[];
-  prop?: CSSProperty;
+  prop?: keyof CSSProperties;
   pseudos?: string[];
   value?: Primitive;
   invalid?: boolean;

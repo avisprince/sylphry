@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { hashSignature, isObject, toKebab } from "../utils";
+import { hashSignature, isCssProperty, isObject, toKebab } from "../utils";
 
 describe("hashSignature", () => {
   it("returns the same hash for identical input", () => {
@@ -70,5 +70,14 @@ describe("isObject type guard", () => {
     expect(isObject(new Date())).toBe(true);
     expect(isObject(/abc/)).toBe(true);
     expect(isObject(Object.create(null))).toBe(true);
+  });
+});
+
+describe("isCssProperty", () => {
+  it("should return true for valid properties", () => {
+    expect(isCssProperty("padding")).toBe(true);
+    expect(isCssProperty("cssFloat")).toBe(true);
+    expect(isCssProperty("float")).toBe(true);
+    expect(isCssProperty("flub")).toBe(false);
   });
 });
