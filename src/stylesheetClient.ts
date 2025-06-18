@@ -52,6 +52,7 @@ export function injectStyles(
       processStyle(style, nonBreakpointStyles);
     } else {
       style.breakpoints.forEach(bp => {
+        breakpointStyles[bp] ||= {};
         processStyle(style, breakpointStyles[bp]);
       });
     }

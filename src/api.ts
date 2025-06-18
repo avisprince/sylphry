@@ -54,7 +54,7 @@ export function createStyles(
     // Determine active keys in insertion order
     const flags = normalizeFlags<StyleMap>(input);
     const activeKeys = (Object.keys(flags) as Array<keyof StyleMap>).filter(
-      k => flags[k]
+      k => flags[k] && k in parsedMap
     );
 
     if (!activeKeys.length) {
@@ -62,7 +62,7 @@ export function createStyles(
     }
 
     const parsedActive = activeKeys.reduce<ParsedStyle[]>((acc, key) => {
-      return acc.concat(parsedMap[key] ?? []);
+      return acc.concat(parsedMap[key]);
     }, []);
 
     const compressed = compressStyles(parsedActive);

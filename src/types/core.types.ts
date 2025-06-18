@@ -55,7 +55,7 @@ export type ProcessStylesOptions = {
 export type ParsedStyle = {
   breakpoints?: string[];
   prop?: CSSProperty;
-  pseudos?: Pseudo[];
+  pseudos?: string[];
   value?: Primitive;
   invalid?: boolean;
 };

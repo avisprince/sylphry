@@ -43,13 +43,7 @@ export function processStyle(style: ParsedStyle, map: Styles): void {
     value: format(style.prop!, style.value!),
   };
 
-  if (style.pseudos && style.pseudos.length > 0) {
-    style.pseudos.forEach(p => {
-      map[p] ||= [];
-      map[p].push(formattedStyle);
-    });
-  } else {
-    map.none ||= [];
-    map.none.push(formattedStyle);
-  }
+  const pseudoKey = style.pseudos?.join(":") || "none";
+  map[pseudoKey] ||= [];
+  map[pseudoKey].push(formattedStyle);
 }

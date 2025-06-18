@@ -92,14 +92,14 @@ describe("parseCompositeKey", () => {
   it("should treat a number as a breakpoint", () => {
     const val = parseCompositeKey("213");
     expect(val).toEqual({
-      breakpoints: ["213"],
+      breakpoints: ["213px"],
     });
   });
 
   it("should handle complex keys with numbers", () => {
     const val = parseCompositeKey("sm:lg:123:14:hover:active");
     expect(val).toEqual({
-      breakpoints: ["sm", "lg", "123", "14"],
+      breakpoints: ["sm", "lg", "123px", "14px"],
       pseudos: ["hover", "active"],
     });
   });

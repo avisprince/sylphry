@@ -22,7 +22,8 @@ export function parseCompositeKey(
     .reduce<ParsedStyle>((acc, k) => {
       if (k in globalConfig.breakpoints || !isNaN(Number(k))) {
         acc.breakpoints ||= [];
-        acc.breakpoints.push(k);
+        const key = !isNaN(Number(k)) ? `${k}px` : k;
+        acc.breakpoints.push(key);
       } else if (PSEUDO_NAMES.has(k)) {
         acc.pseudos ||= [];
         acc.pseudos.push(k as Pseudo);
