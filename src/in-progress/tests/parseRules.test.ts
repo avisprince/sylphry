@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import type { ParsedRules } from "../types/core.types";
-import { parseRules } from "../in-progress/parseRules";
+import type { ParsedRules } from "../../types/core.types";
+import { parseRules } from "../../in-progress/parseRules";
 
 describe("parseRules", () => {
   it("handles simple static properties", () => {

@@ -33,7 +33,7 @@ export function clearStylesheet(): void {
 export function rebuildStylesheet(): void {
   clearStylesheet();
 
-  styleRegistry.forEach(({ parsed }, className) => {
+  styleRegistry.forEach((parsed, className) => {
     injectRules(className, parsed);
   });
 }

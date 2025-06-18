@@ -204,7 +204,7 @@ describe("rebuildStylesheet", () => {
         variants: {},
       },
     ];
-    styleRegistry.set("newC", { parsed });
+    styleRegistry.set("newC", parsed);
 
     rebuildStylesheet();
 

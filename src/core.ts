@@ -8,6 +8,7 @@ import {
   Primitive,
   ProcessStylesOptions,
   Style,
+  StyleMap,
 } from "./types/core.types";
 import { CSSProperties } from "react";
 import { globalConfig } from "./config";
@@ -22,34 +23,34 @@ export function setTheme(theme: string): void {
 /**
  * createStyles: supports object or array flags, type-safe keys, token autocomplete
  */
-export function createStyles<T extends Record<string, Style>>(
-  definitions: T,
+export function createStyles(
+  definitions: StyleMap,
   options: CreateStylesOptions = {}
 ): {
   (
-    flags: Partial<Record<keyof T, boolean>>,
+    flags: Partial<Record<keyof StyleMap, boolean>>,
     options?: ProcessStylesOptions
   ): string;
   (
-    flagsArray: Array<keyof T | [keyof T, boolean]>,
+    flagsArray: Array<keyof StyleMap | [keyof StyleMap, boolean]>,
     options?: ProcessStylesOptions
   ): string;
-} & Record<keyof T, string> {
-  const keys = Object.keys(definitions) as Array<keyof T>;
+} & Record<keyof StyleMap, string> {
+  const keys = Object.keys(definitions) as Array<keyof StyleMap>;
   const globalPrefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
 
   // Parse definitions into raw buckets
-  const parsedList = keys.map(k => parseRules(definitions[k]));
+  const parsedList = Object.values(definitions).map(parseRules);
 
   function processStyles(
-    input: FlagsInput<T>,
+    input: FlagsInput<StyleMap>,
     options: ProcessStylesOptions = {}
   ): string {
     const prefix = options.prefix ? `${toKebab(options.prefix)}-` : "";
 
     // Determine active keys in insertion order
-    const flags = normalizeFlags<T>(input);
-    const activeKeys = (Object.keys(flags) as Array<keyof T>).filter(
+    const flags = normalizeFlags<StyleMap>(input);
+    const activeKeys = (Object.keys(flags) as Array<keyof StyleMap>).filter(
       k => flags[k]
     );
 
@@ -76,7 +77,7 @@ export function createStyles<T extends Record<string, Style>>(
 
     // Register & inject once
     if (!styleRegistry.has(className)) {
-      styleRegistry.set(className, { parsed: parsedActive });
+      styleRegistry.set(className, parsedActive);
       injectRules(className, parsedActive);
     }
 
@@ -85,11 +86,11 @@ export function createStyles<T extends Record<string, Style>>(
 
   // Single-key getters
   const combo = processStyles as unknown as typeof processStyles &
-    Record<keyof T, string>;
+    Record<keyof StyleMap, string>;
 
   keys.forEach(k => {
     Object.defineProperty(combo, k, {
-      get: () => processStyles([k] as Array<keyof T>),
+      get: () => processStyles([k] as Array<keyof StyleMap>),
       enumerable: true,
     });
   });

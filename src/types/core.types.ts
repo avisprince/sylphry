@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { Pseudo } from "./pseudo.types";
+import { CSSProperty } from "./css-props.types";
 
 export type Primitive = string | number;
 
@@ -41,6 +42,8 @@ export type Style =
       [key: string]: Style | TokenRef | string | number;
     };
 
+export type StyleMap = Record<string, Style>;
+
 export type CreateStylesOptions = {
   prefix?: string;
 };
@@ -58,11 +61,15 @@ export interface ParsedRules {
   >;
 }
 
-export interface StyleMeta {
-  parsed: ParsedRules[];
-}
+export type ParsedStyle = {
+  breakpoints?: string[];
+  prop?: CSSProperty;
+  pseudos?: Pseudo[];
+  value?: Primitive;
+  invalid?: boolean;
+};
 
-export type StyleRegistry = Map<string, StyleMeta>;
+export type StyleRegistry = Map<string, ParsedRules[]>;
 
 export type FlagsInput<T> =
   | Partial<Record<keyof T, boolean>>
