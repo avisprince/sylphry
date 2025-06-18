@@ -5,17 +5,22 @@ import { Styles } from "../types/stylesheetClient.types";
 import { isObject, toKebab } from "./utils";
 
 function getTokenValue(token: string): string | null {
-  const { tokens } = globalConfig;
+  const { tokens, activeTheme } = globalConfig;
 
   const parts = token.split(":").filter(Boolean);
-  const topKey = parts[0];
-  const root = topKey in tokens ? tokens : tokens.default;
+  const roots = [tokens, tokens[activeTheme], tokens.default];
 
-  const value = parts.reduce((acc, key) => {
-    return isObject(acc) ? acc?.[key] : null;
-  }, root as unknown);
+  for (const root of roots) {
+    const value = parts.reduce((acc, key) => {
+      return isObject(acc) ? acc?.[key] : null;
+    }, root as unknown);
 
-  return isObject(value) || value == null ? null : String(value);
+    if (value != null && !isObject(value)) {
+      return String(value);
+    }
+  }
+
+  return null;
 }
 
 /** Format raw value: number→unit or resolve token */
