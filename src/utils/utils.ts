@@ -1,4 +1,5 @@
-import { CSSProperties } from "react";
+import type { PropertiesHyphen } from "csstype";
+import type { CSSProperties } from "react";
 
 /** DJB2 hash → base36 */
 export function hashSignature(sig: string): string {
@@ -18,10 +19,8 @@ export function isObject(val: unknown): val is Record<string, unknown> {
 
 const _divStyle = document.createElement("div").style;
 
-/**
- * @param key any string
- * @returns true if it’s a valid camelCased CSS property
- */
-export function isCssProperty(key: string): key is keyof CSSProperties {
+export function isCssProperty(
+  key: string
+): key is keyof CSSProperties | keyof PropertiesHyphen {
   return key in _divStyle;
 }

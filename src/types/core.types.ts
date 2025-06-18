@@ -1,5 +1,6 @@
-import { Pseudo } from "./pseudo.types";
-import { CSSProperties } from "react";
+import type { Pseudo } from "./pseudo.types";
+import type { CSSProperties } from "react";
+import type { PropertiesHyphen } from "csstype";
 
 export type Primitive = string | number;
 
@@ -26,6 +27,9 @@ export type Style =
   | ({
       // a) Any valid React CSS property
       [K in keyof CSSProperties]?: CSSProperties[K];
+    } & {
+      // a) Any valid hyphen CSS property
+      [K in keyof PropertiesHyphen]?: PropertiesHyphen[K];
     } & {
       // b) Nested pseudo selectors
       [P in Pseudo]?: Style;
@@ -54,7 +58,7 @@ export type ProcessStylesOptions = {
 
 export type ParsedStyle = {
   breakpoints?: string[];
-  prop?: keyof CSSProperties;
+  prop?: keyof CSSProperties | keyof PropertiesHyphen;
   pseudos?: string[];
   value?: Primitive;
   invalid?: boolean;

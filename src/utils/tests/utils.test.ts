@@ -79,5 +79,8 @@ describe("isCssProperty", () => {
     expect(isCssProperty("cssFloat")).toBe(true);
     expect(isCssProperty("float")).toBe(true);
     expect(isCssProperty("flub")).toBe(false);
+    expect(isCssProperty("align-items")).toBe(true);
+    expect(isCssProperty("alignItems")).toBe(true);
+    expect(isCssProperty("fakeCamel")).toBe(false);
   });
 });
