@@ -78,6 +78,17 @@ const styles = createStyles({
 });
 ```
 
+#### Composite Keys
+
+Composite keys can be used as a shorthand for nested styles. Multiple breakpoints and pseudo styles can be combined, but only one `CSSProperty` can be used per composite key.
+
+```ts
+// breakpoint: sm, padding, :hover
+"sm:padding:hover": <value>,
+// "Create pseudo styling for :active:focus combo for both md and lg breakpoints
+"md:lg:active:focus": { ... }
+```
+
 ## 📖 API
 
 ### `createStyles(definitions, options?)`
