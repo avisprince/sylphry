@@ -22,14 +22,12 @@
 
 ## 📑 Table of Contents
 
-- [Installation](#installation)
-- [Quickstart](#quickstart)
-- [Configuration](#configuration)
-- [API Reference](#api-reference)
-- [Theming & Tokens](#theming--tokens)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
+- [Installation](#-installation)
+- [Quickstart](#-quickstart)
+- [API Reference](#-api)
+- [Theming & Tokens](#-theming--tokens)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🚀 Installation
 
