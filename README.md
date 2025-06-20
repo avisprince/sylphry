@@ -263,7 +263,7 @@ const styles = createStyles({
 
 ## 🛠️ Contributing
 
-1. Fork the repo
+1. Fork the [Sylphry Repo](https://github.com/avisprince/sylphry)
 2. Create your feature branch (`git checkout -b feat/YourFeature`)
 3. Commit your changes (`git commit -m 'feat: add YourFeature'`)
 4. Push to the branch (`git push origin feat/YourFeature`)
