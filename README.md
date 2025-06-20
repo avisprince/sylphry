@@ -267,7 +267,3 @@ Please follow the existing code style and run tests before opening a PR.
 ## 📄 License
 
 This project is licensed under the **MIT License**. See [LICENSE](./LICENSE) for details.
-
----
-
-_Made with 💨 by Avi Prince(https://github.com/avisprince)_
