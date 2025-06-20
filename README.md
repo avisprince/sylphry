@@ -2,10 +2,6 @@
 
 **Atomic CSS-in-JS: framework-agnostic, tokenized theming & breakpoints—import and go.**
 
-## COMING SOON!!
-
----
-
 ## 🎯 Features
 
 - **Atomic classes**
@@ -21,8 +17,6 @@
 - **TypeScript support**
   Fully typed API with token autocomplete and type-safe style keys.
 
----
-
 ## 🚀 Installation
 
 ```bash
@@ -30,8 +24,6 @@ npm install sylphry
 # or
 yarn add sylphry
 ```
-
----
 
 ## 🔧 Quickstart
 
@@ -74,16 +66,7 @@ const styles = createStyles({
 });
 ```
 
----
-
 ## 📖 API
-
-### `initialize(options)`
-
-- **`tokens?`** – your token map (themes × token names)
-- **`breakpoints?`** – override default breakpoints
-- **`defaultUnit?`** – unit for numeric values (default: `"px"`)
-- **`prefix?`** – class-name prefix (e.g. `"sylphry"`)
 
 ### `createStyles(definitions, options?)`
 
@@ -91,66 +74,164 @@ Returns a function that:
 
 - Accepts **flags** as an object `{ key: boolean }` or an array of keys/tuples
 - Returns a unique class name string
-- Has properties for each key, e.g. `useStyles.container`
+- Has properties for each key, e.g. `styles.container`
 
-#### Definitions shape
+`options` param:
 
 ```ts
-type NestedStyles = Record<string, string | number> | CSSProperties;
-
-interface CreateStylesOptions {
-  breakpoints?: Record<string, string>;
-  defaultUnit?: string;
+type Options = {
+  // Set a prefix for the all generated classnames. Useful for finding classes in the browser
   prefix?: string;
-  tokens?: ThemeTokens;
-}
+};
 ```
 
 ### `setTheme(themeName)`
 
-Switches the active theme (must match one of your token keys) and rebuilds dynamic styles.
+Switches the active theme and rebuilds dynamic styles. Will use `default` theme if no matches are found.
 
 ---
 
 ## 🔄 Theming & Tokens
 
-- Use `$tokenName$` in any string value to inject token colors, spacing, etc.
-- Supports default-theme fallback if a token is missing in the active theme.
+### Global Breakpoint and Token Definitions
+
+#### Setup
+
+There are 2 steps:
+
+1. Create a config file at the root: `sylphry.config.cjs`
+2. Install the sylphry vite plugin
+
+#### Config
+
+At the root of the project, create a config file `sylphry.config.cjs`.
+
+Config Interface:
 
 ```ts
-const useBtn = createStyles({
-  btn: {
-    background: "$primary$",
-    ":hover": { background: "$secondary$" },
-  },
-});
+type Config = {
+  // Media breakpoint definitions
+  breakpoints?: Record<string, string>;
+  // Global token definitions
+  tokens?: Record<string, string | number | Tokens>;
+  // Default unit for numeric values - defaults to "px"
+  defaultUnit?: string;
+  // The current theme to reference in the tokens - defaults to "default"
+  activeTheme?: string;
+};
 ```
 
----
-
-## 🎛 Custom Breakpoints
-
-Override or extend the built-in breakpoints:
+Example Config: `sylphry.config.cjs`
 
 ```ts
-initialize({
+module.exports = {
   breakpoints: {
-    sm: "480px",
-    md: "768px",
-    lg: "1024px",
-    xl: "1280px",
+    phone: "100px",
+    tablet: "500px",
+  },
+  tokens: {
+    fontFamily: "Arial, Helvetica, sans-serif",
+    default: {
+      primary: "#3498db",
+      secondary: "#e74c3c",
+      accent: "#f1c40f",
+      spacing: {
+        xs: "2px",
+        sm: "40px",
+        md: "8px",
+        lg: "16px",
+        xl: "32px",
+      },
+      fontSizes: {
+        sm: "12px",
+        md: "16px",
+        lg: "20px",
+        xl: "24px",
+      },
+    },
+    dark: {
+      primary: "#1f3a93",
+      secondary: "#c0392b",
+      accent: "#f39c12",
+    },
+    light: {
+      primary: "#5dade2",
+      secondary: "#ec7063",
+      accent: "#f7dc6f",
+    },
+  },
+  activeTheme: "dark",
+};
+```
+
+#### Vite Plugin
+
+Install the Vite plugin in `vite.config.ts`
+
+```ts
+import { defineConfig } from "vite";
+import sylphry from "sylphry/vite-plugin";
+
+export default defineConfig({
+  plugins: [sylphry()],
+});
+```
+
+#### Token Usage
+
+- Use `$tokenName$` in any string value to inject token colors, spacing, etc.
+- Supports default fallback if a token is missing in the active theme.
+- Tokens can also provide a path `$path1:path2:tokenName$` to use specific tokens. This will still try to fallback to `default` if not found otherwise it will keep the original string.
+
+```ts
+const styles = createStyles({
+  btn: {
+    // Will attempt to find primary defined at the root, then at the active theme, then at the default theme
+    background: "$primary$",
+    ":hover": {
+      // Will always use dark -> secondary even if the theme is something else
+      background: "$dark:secondary$",
+    },
   },
 });
 ```
 
-Then in your styles:
+#### `styles` Options
+
+The returned function from `createStyles` has an optional second param `options`.
 
 ```ts
-const useBox = createStyles({
-  box: {
-    width: 100,
-    sm: { width: 150 },
-    md: { width: 200 },
+type Options = {
+  // Set a prefix for the generated classname. Useful for finding classes in the browser. This overrides the prefix set by createStyles
+  prefix?: string;
+  // Same structure as config. These token definitions will take priority over the tokens in the general config.
+  tokens?: Tokens;
+};
+```
+
+Example:
+
+```ts
+export default function Component() {
+  const [color, setColor] = useState("green");
+  const onClick = () => {
+    setColor(prev => (prev === "green" ? "blue" : "green"));
+  };
+
+  return (
+    <div
+      className={styles(["style1"], {
+        tokens: { color },
+      })}
+    >
+      Hello
+    </div>
+  );
+}
+
+const styles = createStyles({
+  style1: {
+    backgroundColor: $color$,
   },
 });
 ```

@@ -7,8 +7,9 @@ export type Primitive = string | number;
 type BreakpointNames = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 export type BreakpointsMap = Record<BreakpointNames | string, string>;
 
-export type ThemeTokens = Record<string, Primitive | Record<string, Primitive>>;
-export type Tokens = Record<string, Primitive | ThemeTokens>;
+export type Tokens = {
+  [key: string]: Primitive | Tokens;
+};
 
 export type Config = {
   /** Responsive breakpoints override */
