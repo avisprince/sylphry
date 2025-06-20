@@ -1,6 +1,6 @@
 {
   "name": "sylphry",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Lightweight, atomic, zero-config, framework-agnostic CSS-in-JS with tokens, theming & responsive breakpoints.",
   "homepage": "https://github.com/avisprince/sylphry#readme",
