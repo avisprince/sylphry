@@ -266,4 +266,4 @@ Please follow the existing code style and run tests before opening a PR.
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See [LICENSE](./LICENSE) for details.
+This project is licensed under the **MIT License**. See [LICENSE](https://github.com/avisprince/sylphry/blob/main/LICENSE) for details.
