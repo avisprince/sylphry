@@ -3,7 +3,7 @@
 **Atomic CSS-in-JS: framework-agnostic, tokenized theming & breakpoints—import and go.**
 
 [![npm](https://img.shields.io/npm/v/sylphry.svg)](https://www.npmjs.com/package/sylphry)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/avisprince/sylphry/blob/main/LICENSE)
 
 ## 🎯 Features
 
