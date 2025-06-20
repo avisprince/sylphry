@@ -1,6 +1,9 @@
 import { globalConfig } from "./config";
 import { styleRegistry } from "./globals";
-import { processStyle } from "./utils/stylesheetClientUtils";
+import {
+  createStylesheetEntry,
+  processStyle,
+} from "./utils/stylesheetClientUtils";
 import { ParsedStyle } from "./types/core.types";
 import { Styles } from "./types/stylesheetClient.types";
 
@@ -32,11 +35,10 @@ export function clearStylesheet(): void {
 
 export function deleteClassNameRules(className: string): void {
   const sheet = getStylesheet();
-  for (let i = 0; i < sheet.cssRules.length; i++) {
-    const rule = sheet.cssRules.item(i);
-    if (rule?.cssText.includes(className)) {
+  for (let i = sheet.cssRules.length - 1; i >= 0; i--) {
+    const rule = sheet.cssRules[i];
+    if (rule.cssText.includes(className)) {
       sheet.deleteRule(i);
-      i--; // double check this
     }
   }
 }
@@ -70,23 +72,15 @@ export function injectStyles(
   });
 
   Object.entries(nonBreakpointStyles).forEach(([pseudo, styles]) => {
-    const ps = pseudo === "none" ? "" : `:${pseudo}`;
-    const decl = styles.map(({ prop, value }) => `${prop}:${value};`).join(" ");
-    sheet.insertRule(`.${className}${ps}{${decl}}`, sheet.cssRules.length);
+    const style = createStylesheetEntry(className, pseudo, styles);
+    sheet.insertRule(style, sheet.cssRules.length);
   });
 
   Object.entries(breakpointStyles).forEach(([bp, pseudoMap]) => {
     Object.entries(pseudoMap).forEach(([pseudo, styles]) => {
-      const ps = pseudo === "none" ? "" : `:${pseudo}`;
-      const decl = styles
-        .map(({ prop, value }) => `${prop}:${value};`)
-        .join(" ");
-
       const minWidth = globalConfig.breakpoints[bp] ?? bp;
-      sheet.insertRule(
-        `@media(min-width:${minWidth}){.${className}${ps}{${decl}}}`,
-        sheet.cssRules.length
-      );
+      const style = createStylesheetEntry(className, pseudo, styles, minWidth);
+      sheet.insertRule(style, sheet.cssRules.length);
     });
   });
 }

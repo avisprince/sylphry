@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi, ParsedStack } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as stylesheet from "../stylesheetClient";
 import { styleRegistry } from "../globals";
 import { setTheme, createStyles } from "../api";
-import { FlagsInput, ParsedStyle } from "../types/core.types";
+import { ParsedStyle } from "../types/core.types";
 import { globalConfig } from "../config";
 
 describe("API functions", () => {
@@ -173,6 +173,44 @@ describe("API functions", () => {
             breakpoints: ["sm"],
             prop: "margin",
             value: "bar $fizz$",
+          }),
+        ])
+      );
+
+      spy.mockRestore();
+    });
+
+    it("deletes entries from the stylesheet when a style is updated", () => {
+      const defs = { box: { "sm:margin": "$foo$" } };
+      const styles = createStyles(defs);
+
+      const spy = vi.spyOn(stylesheet, "injectStyles");
+      const deleteSpy = vi.spyOn(stylesheet, "deleteClassNameRules");
+
+      const cls = styles(["box"], { tokens: { foo: "bar" } });
+
+      expect(spy).toHaveBeenCalledWith(
+        cls,
+        expect.arrayContaining([
+          expect.objectContaining({
+            breakpoints: ["sm"],
+            prop: "margin",
+            value: "bar",
+          }),
+        ])
+      );
+
+      const cls2 = styles(["box"], { tokens: { foo: "bar2" } });
+
+      expect(deleteSpy).toHaveBeenCalledWith(cls2);
+
+      expect(spy).toHaveBeenCalledWith(
+        cls2,
+        expect.arrayContaining([
+          expect.objectContaining({
+            breakpoints: ["sm"],
+            prop: "margin",
+            value: "bar2",
           }),
         ])
       );

@@ -1,7 +1,7 @@
 import { globalConfig } from "../config";
 import { isUnitlessNumber } from "../globals";
 import { ParsedStyle, Primitive, Tokens } from "../types/core.types";
-import { Styles } from "../types/stylesheetClient.types";
+import { Styles, StylesheetStyle } from "../types/stylesheetClient.types";
 import { isObject, toKebab } from "./utils";
 
 function getTokenValue(token: string, tokens: Tokens): string | null {
@@ -53,4 +53,17 @@ export function processStyle(style: ParsedStyle, map: Styles): void {
   const pseudoKey = style.pseudos?.join(":") || "none";
   map[pseudoKey] ||= [];
   map[pseudoKey].push(formattedStyle);
+}
+
+export function createStylesheetEntry(
+  className: string,
+  pseudo: string,
+  styles: StylesheetStyle[],
+  mediaWidth?: string
+): string {
+  const ps = pseudo === "none" ? "" : `:${pseudo}`;
+  const decl = styles.map(({ prop, value }) => `${prop}:${value};`).join(" ");
+  const style = `.${className}${ps}{${decl}}`;
+
+  return mediaWidth ? `@media(min-width:${mediaWidth}){${style}}` : style;
 }

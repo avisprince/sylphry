@@ -1,6 +1,6 @@
-type Style = {
+export type StylesheetStyle = {
   prop: string;
   value: string;
 };
 
-export type Styles = Record<string, Style[]>;
+export type Styles = Record<string, StylesheetStyle[]>;

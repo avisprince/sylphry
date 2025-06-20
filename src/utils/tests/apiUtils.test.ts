@@ -3,6 +3,7 @@ import { FlagsInput, ParsedStyle } from "../../types/core.types";
 import {
   cloneParsedStyle,
   compressStyles,
+  isEqualParsedStyles,
   normalizeFlags,
   parseCompositeKey,
   parseStyle,
@@ -319,5 +320,23 @@ describe("compressStyles", () => {
     expect(compressed).toEqual(
       "sm:md:hover:active:padding=10|padding=10|lg:color=green"
     );
+  });
+});
+
+describe("isEqualParsedStyles", () => {
+  it("returns false for different values", () => {
+    const rule1 = { value: "foo" } as ParsedStyle;
+    const rule2 = { value: "bar" } as ParsedStyle;
+
+    const isEqual = isEqualParsedStyles([rule1], [rule2]);
+    expect(isEqual).toBe(false);
+  });
+
+  it("returns true when props are different", () => {
+    const rule1 = { prop: "color", value: "foo" } as ParsedStyle;
+    const rule2 = { prop: "margin", value: "foo" } as ParsedStyle;
+
+    const isEqual = isEqualParsedStyles([rule1], [rule2]);
+    expect(isEqual).toBe(true);
   });
 });

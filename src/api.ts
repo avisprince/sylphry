@@ -1,5 +1,9 @@
 import { hashSignature, toKebab } from "./utils/utils";
-import { injectStyles, rebuildStylesheet } from "./stylesheetClient";
+import {
+  deleteClassNameRules,
+  injectStyles,
+  rebuildStylesheet,
+} from "./stylesheetClient";
 import { styleRegistry } from "./globals";
 import {
   CreateStylesOptions,
@@ -9,7 +13,12 @@ import {
   StyleMap,
 } from "./types/core.types";
 import { globalConfig } from "./config";
-import { compressStyles, normalizeFlags, parseStyle } from "./utils/apiUtils";
+import {
+  compressStyles,
+  isEqualParsedStyles,
+  normalizeFlags,
+  parseStyle,
+} from "./utils/apiUtils";
 import { format } from "./utils/stylesheetClientUtils";
 
 /** Switch active theme and rebuild only dynamic styles */
@@ -78,8 +87,12 @@ export function createStyles(
         }))
       : parsedActive;
 
-    // Register & inject once
-    if (!styleRegistry.has(className)) {
+    const registered = styleRegistry.get(className);
+    if (!registered || !isEqualParsedStyles(registered, finalStyles)) {
+      if (registered) {
+        deleteClassNameRules(className);
+      }
+
       styleRegistry.set(className, finalStyles);
       injectStyles(className, finalStyles);
     }

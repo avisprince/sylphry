@@ -1,5 +1,4 @@
 import { globalConfig } from "../config";
-import { styleRegistry } from "../globals";
 import { FlagsInput, ParsedStyle, Primitive, Style } from "../types/core.types";
 import { Pseudo, PSEUDO_NAMES } from "../types/pseudo.types";
 import { isCssProperty, isObject } from "./utils";
@@ -112,20 +111,9 @@ export function compressStyles(styles: ParsedStyle[]): string {
     .join("|");
 }
 
-export function shouldUpdateRegistry(
-  className: string,
-  newStyles: ParsedStyle[]
+export function isEqualParsedStyles(
+  a: ParsedStyle[],
+  b: ParsedStyle[]
 ): boolean {
-  const registered = styleRegistry.get(className);
-  if (!registered) {
-    return true;
-  }
-
-  for (const [index, style] of registered!.entries()) {
-    if (style.value !== newStyles[index].value) {
-      return true;
-    }
-  }
-
-  return false;
+  return a.every((style, index) => style.value === b[index].value);
 }
