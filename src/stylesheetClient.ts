@@ -30,6 +30,17 @@ export function clearStylesheet(): void {
   }
 }
 
+export function deleteClassNameRules(className: string): void {
+  const sheet = getStylesheet();
+  for (let i = 0; i < sheet.cssRules.length; i++) {
+    const rule = sheet.cssRules.item(i);
+    if (rule?.cssText.includes(className)) {
+      sheet.deleteRule(i);
+      i--; // double check this
+    }
+  }
+}
+
 /** Rebuild all registered styles into the sheet */
 export function rebuildStylesheet(): void {
   clearStylesheet();

@@ -109,6 +109,14 @@ describe("parseCompositeKey", () => {
       pseudos: ["hover", "active"],
     });
   });
+
+  it("should handle pseudos with parens", () => {
+    const val = parseCompositeKey("sm:nth-child(2)");
+    expect(val).toEqual({
+      breakpoints: ["sm"],
+      pseudos: ["nth-child(2)"],
+    });
+  });
 });
 
 describe("parseStyle", () => {

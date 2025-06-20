@@ -1,4 +1,5 @@
 import { globalConfig } from "../config";
+import { styleRegistry } from "../globals";
 import { FlagsInput, ParsedStyle, Primitive, Style } from "../types/core.types";
 import { Pseudo, PSEUDO_NAMES } from "../types/pseudo.types";
 import { isCssProperty, isObject } from "./utils";
@@ -23,7 +24,7 @@ export function parseCompositeKey(
         acc.breakpoints ||= [];
         const key = !isNaN(Number(k)) ? `${k}px` : k;
         acc.breakpoints.push(key);
-      } else if (PSEUDO_NAMES.has(k)) {
+      } else if (PSEUDO_NAMES.has(k.split("(")[0])) {
         acc.pseudos ||= [];
         acc.pseudos.push(k as Pseudo);
       } else if (isCssProperty(k)) {
@@ -109,4 +110,22 @@ export function compressStyles(styles: ParsedStyle[]): string {
       return `${bps}${pseudo}${prop}=${value}`;
     })
     .join("|");
+}
+
+export function shouldUpdateRegistry(
+  className: string,
+  newStyles: ParsedStyle[]
+): boolean {
+  const registered = styleRegistry.get(className);
+  if (!registered) {
+    return true;
+  }
+
+  for (const [index, style] of registered!.entries()) {
+    if (style.value !== newStyles[index].value) {
+      return true;
+    }
+  }
+
+  return false;
 }
