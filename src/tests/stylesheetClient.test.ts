@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   __resetStylesheet,
   clearStylesheet,
+  deleteClassNameRules,
   getStylesheet,
   injectStyles,
   rebuildStylesheet,
@@ -56,6 +57,56 @@ describe("clearStylesheet", () => {
     clearStylesheet();
     expect(sheet.cssRules.length).toBe(0);
     expect(document.head.querySelectorAll("style")).toHaveLength(1);
+  });
+});
+
+describe("deleteClassNameRules", () => {
+  beforeEach(() => {
+    // Clear any existing <style> tags
+    document.head.innerHTML = "";
+    __resetStylesheet();
+  });
+
+  it("does nothing if no rules contain the className", () => {
+    const sheet = getStylesheet();
+    expect(sheet.cssRules).toHaveLength(0);
+
+    sheet.insertRule(".foo { color: red; }");
+    sheet.insertRule(".bar { color: blue; }");
+    sheet.insertRule(".foo-bar { margin: 0; }");
+
+    deleteClassNameRules("baz");
+
+    expect(sheet.cssRules).toHaveLength(3);
+  });
+
+  it("removes all rules whose cssText includes the className", () => {
+    const sheet = getStylesheet();
+    expect(sheet.cssRules).toHaveLength(0);
+
+    sheet.insertRule(".foo { color: red; }");
+    sheet.insertRule(".bar { color: blue; }");
+    sheet.insertRule(".foo-bar { margin: 0; }");
+
+    deleteClassNameRules("foo");
+
+    // should delete idx 2 first, then idx 0
+    expect(sheet.cssRules).toHaveLength(1);
+    expect(sheet.cssRules[0].cssText).toBe(".bar {color: blue;}");
+  });
+
+  it('matches substrings (so "bar" also removes ".foo-bar")', () => {
+    const sheet = getStylesheet();
+    expect(sheet.cssRules).toHaveLength(0);
+
+    sheet.insertRule(".foo { color: red; }");
+    sheet.insertRule(".bar { color: blue; }");
+    sheet.insertRule(".foo-bar { margin: 0; }");
+
+    deleteClassNameRules("bar");
+
+    expect(sheet.cssRules).toHaveLength(1);
+    expect(sheet.cssRules[0].cssText).toBe(".foo {color: red;}");
   });
 });
 
